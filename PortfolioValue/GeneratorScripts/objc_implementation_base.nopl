@@ -1,0 +1,878 @@
+
+console("generating objc base implementations");
+
+Object classes = abstractions.classes;
+
+String schemaNickname = schema.targetNamespace;
+schemaNickname = substring(schemaNickname, lastIndexOf(schemaNickname, "/")+1);
+
+for(int i = 0; i < classes.count; i++)
+{
+	Object class = classes[i];
+	String name = class.className;
+	String parentName = class.parentClassName;
+	Boolean hasParentClass = (parentName != "");
+
+	//output a base class with generated code
+	String baseName = name+"_Base";
+	outputToFile(valueForKey('__ROOT_DIR__')+"/"+baseName+".m");
+
+	Object attributes = class.attributes;
+	Object children = class.children;
+
+//put a comment at the top with some metadata about this file
+<?//
+//  ?>#baseName;<?.m
+//  ?>#schemaNickname;<?
+//
+//  Created by NoPLGenerator on ?>#format("%/%/%", (Number)month(), (Number)dayOfTheMonth(), (String)substring((String)year(), 2));<?.
+//  Copyright (c) ?>#year();<?. All rights reserved.
+//
+
+#import "?>#baseName;<?.h"
+?>
+for(int j = 0; j < children.count; j++)
+{
+<?#import "?>#children[j].name;<?.h"
+?>
+}
+<?
+@implementation ?>#baseName;<?
+
+?>
+if(children.count > 0)
+{
+<?-(id)init
+{
+	self = [super init];
+	if(self)
+	{
+?>
+for(int j = 0; j < children.count; j++)
+{
+	Object child = children[j];
+	String pluralName = pluralize((String)child.name);
+<?		_?>#pluralName;<? = [[NSMutableArray alloc] init];
+?>
+}
+<?	}
+	return self;
+}
+
+?>
+}
+
+<?-(id)initWithXML:(xmlNodePtr)node parent:(?>#valueForKey('__ROOT_CLASS__');<?*)parentObj
+{
+?>
+if(hasParentClass)
+{
+<?	self = [super initWithXML:node parent:parentObj];
+?>
+}
+else
+{
+<?	self = [super init];
+?>
+}
+
+<?	if(self)
+	{
+?>
+	if(!hasParentClass)
+	{
+<?		self.parent = parentObj;
+?>
+	}
+
+if(attributes.count > 0)
+{
+	for(int j = 0; j < attributes.count; j++)
+	{
+		Object attr = attributes[j];
+		String attrName = attr.name;
+<?		?>
+		if(j ==0)
+		{
+			<?char* ?>
+		}
+
+		<?attrVal = (char*)xmlGetProp(node, (xmlChar*)"?>#attrName;<?");
+		if(attrVal)
+		{
+?>
+		String typeName = valueForKey((String)attr.type);
+		switch(typeName)
+		{
+			case 'int':
+			case 'unsigned char':
+<?			_?>#attrName;<? = atoi(attrVal);
+?>
+				break;
+			case 'unsigned int':
+<?			_?>#attrName;<? = strtoul(attrVal, NULL, 0);
+?>
+				break;
+			case 'double':
+			case 'float':
+<?			_?>#attrName;<? = atof(attrVal);
+?>
+				break;
+			case 'CGPoint':
+<?			_?>#attrName;<? = string_to_CGPoint(attrVal);
+?>
+				break;
+			case 'CGRect':
+<?			_?>#attrName;<? = string_to_CGRect(attrVal);
+?>
+				break;
+			case 'UIColor*':
+<?			self.?>#attrName;<? = string_to_UIColor(attrVal);
+?>
+				break;
+			case 'NSString*':
+<?			self.?>#attrName;<? = [NSString stringWithUTF8String:attrVal];
+?>
+				break;
+			case 'BOOL':
+<?			_?>#attrName;<? = string_to_BOOL?>#typeName;<?(attrVal);
+?>
+				break;
+			default:
+<?			?>
+				//determine if this is an enum
+				BOOL isEnum = NO;
+				Object enums = abstractions.enums;
+				for(int k = 0; k < enums.length; k++)
+				{
+					if(enums[k].enumName == typeName)
+					{
+						isEnum = YES;
+						break;
+					}
+				}
+				if(isEnum)
+				{
+					//this is an enum type
+					<?_?>#attrName;<? = string_to_?>#typeName;<?(attrVal);
+?>
+				}
+				else
+				{
+					//this is a string?
+					<?NSLog(@"Couldn't read ?>#attrName;<?");
+?>
+				}
+
+				break;
+		}
+
+<?			xmlFree(attrVal);
+		}
+?>
+		if(attr['default'] != '0x0')
+		{
+			//this attribute has a default value
+<?		else
+?>
+			String defaultStr = attr['default'];
+			switch(typeName)
+			{
+				case 'NSString*':
+					//this is a string, enclose it in quotes
+					defaultStr = format('@"%"', defaultStr);
+					break;
+				case 'UIColor*':
+					defaultStr = format('string_to_ccColor3B("%")', defaultStr);
+					break;
+				default:
+					//determine if this is an enum
+					BOOL isEnum = NO;
+					Object enums = abstractions.enums;
+					for(int k = 0; k < enums.length; k++)
+					{
+						if(enums[k].enumName == typeName)
+						{
+							isEnum = YES;
+							break;
+						}
+					}
+					if(isEnum)
+					{
+						defaultStr = typeName+"_"+defaultStr;
+					}
+					break;
+			}
+			BOOL isObject = (indexOf(typeName, '*') != -1);
+			if(isObject)
+			{
+<?			self.?>#attr.name;<? = ?>#defaultStr;<?;
+?>
+			}
+			else
+			{
+<?			_?>#attr.name;<? = ?>#defaultStr;<?;
+?>
+			}
+		}
+	}
+<?
+?>
+}
+
+if(children.count > 0)
+{
+	for(int j = 0; j < children.count; j++)
+	{
+		Object child = children[j];
+		String pluralName = pluralize((String)child.name);
+<?		_?>#pluralName;<? = [[NSMutableArray alloc] init];
+?>
+	}
+<?
+		xmlNodePtr child = node->children;
+		while(child)
+		{
+			if(child->type == XML_ELEMENT_NODE)
+			{
+				Class _c = NSClassFromString([NSString stringWithUTF8String:(char*)child->name]);
+				if(_c)
+				{
+					?>#valueForKey('__ROOT_CLASS__');<?* newObj = [[_c alloc] initWithXML:child parent:parentObj];
+?>
+	for(int j = 0; j < children.count; j++)
+	{
+		Object child = children[j];
+		String childName = child.name;
+<?					?>
+		if(j != 0)
+		{
+			<?else ?>
+		}
+
+			<?if([newObj isKindOfClass:[?>#childName;<? class]])
+						[_?>#pluralize(childName);<? addObject:newObj];
+?>
+	}
+<?				}
+			}
+			child = child->next;
+		}
+?>
+}	
+
+<?	}
+	return self;
+}
+
+?>
+
+if(!hasParentClass)
+{
+<?-(void)load
+{
+	//override this in subclasses
+}
+
+-(void)unload
+{
+	//override this in subclasses
+}
+
+?>
+
+	if(children.count == 0)
+	{
+<?-(void)visitLoad
+{
+	[self load];
+}
+
+-(void)visitUnload
+{
+	[self unload];
+}
+
+?>
+	}
+}
+
+if(children.count > 0)
+{
+<?-(void)visitLoad
+{
+?>
+if(hasParentClass)
+{
+<?	[super visitLoad];
+
+?>
+}
+else
+{
+<?	[self load];
+
+?>
+}
+
+if(children.count > 0)
+{
+	for(int j = 0; j < children.count; j++)
+	{
+		Object child = children[j];
+		String listName = pluralize((String)child.name);
+<?	for(?>#child.name;<?* child in _?>#listName;<?)
+		[child visitLoad];
+?>
+	}
+}
+<?}
+
+-(void)visitUnload
+{
+?>
+if(hasParentClass)
+{
+<?	[super visitUnload];
+
+?>
+}
+else
+{
+<?	[self unload];
+
+?>
+}
+if(children.count > 0)
+{
+	for(int j = 0; j < children.count; j++)
+	{
+		Object child = children[j];
+		String listName = pluralize((String)child.name);
+<?	for(?>#child.name;<?* child in _?>#listName;<?)
+		[child visitUnload];
+?>
+	}
+}
+<?}
+?>
+}
+
+if(!hasParentClass)
+{
+<?-(NSString*)printToXML
+{
+	NSMutableString* str = [[NSMutableString alloc] init];
+	[str appendString:@"<"];
+	[str appendString:@"?xml version=\"1.0\" encoding=\"UTF-8\" ?"];
+	[str appendString:@">"];
+
+	[self appendXMLTagToString:str];
+
+	return str;
+}
+
+?>
+}
+
+<?-(void)appendXMLTagToString:(NSMutableString*)str
+{
+?>
+if(children.count > 0)
+{
+<?	[str appendString:@"<?>#name;<?"];
+	[self appendXMLAttributesToString:str];
+	[str appendString:@">"];
+	[self appendXMLChildrenToString:str];
+	[str appendString:@"</?>#name;<?>"];
+?>
+}
+else
+{
+<?	[str appendString:@"<?>#name;<?"];
+	[self appendXMLAttributesToString:str];
+	[str appendString:@"/>"];
+?>
+}
+<?}
+
+?>
+
+if(attributes.count > 0 || !hasParentClass)
+{
+<?-(void)appendXMLAttributesToString:(NSMutableString*)str
+{
+?>
+	if(hasParentClass)
+	{
+<?	[super appendXMLAttributesToString:str];
+
+?>
+	}
+	
+	for(int j = 0; j < attributes.count; j++)
+	{
+		Object attr = attributes[j];
+		String typeName = attr.type;
+		String attribName = attr.name;
+		String convertedTypeName = valueForKey(typeName);
+		switch(convertedTypeName)//TODO: all the types
+		{
+			case 'NSString*':
+<?	if([_?>#attribName;<? length] > 0)
+		[str appendFormat:@" ?>#attribName;<?=\"%@\"", escapeForXML(_?>#attribName;<?)];
+?>
+				break;
+			case 'int':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%d\"", _?>#attribName;<?];
+?>
+				break;
+			case 'unsigned int':
+			case 'char':
+			case 'unsigned char':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%d\"", (int)_?>#attribName;<?];
+?>
+				break;
+			case 'double':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%g\"", _?>#attribName;<?];
+?>
+				break;
+			case 'float':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%g\"", _?>#attribName;<?];
+?>
+				break;
+			case 'BOOL':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%@\"", (_?>#attribName;<? ? @"true" : @"false")];
+?>
+				break;
+			case 'CGPoint':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%f,%f\"", ?>#attribName;<?.x, ?>#attribName;<?.y];
+?>
+				break;
+			case 'cocos2d::CCRect':
+<?	[str appendFormat:@" ?>#attribName;<?=\"%f,%f,%f,%f\"", ?>#attribName;<?.origin.x, ?>#attribName;<?.origin.y, ?>#attribName;<?.size.width, ?>#attribName;<?.size.height];
+?>
+				break;
+			case 'cocos2d::ccColor3B':
+<?	//TODO:figure out how to make color into HEX
+?>
+				break;
+			default:
+				BOOL isEnum = NO;
+				String enumName;
+				Object enums = abstractions.enums;
+				for(int k = 0; k < enums.length; k++)
+				{
+					if(enums[k].enumName == typeName)
+					{
+						enumName = enums[k].enumName;
+						isEnum = YES;
+						break;
+					}
+				}
+				if(isEnum)
+				{
+					//this is an enum value, convert it to a string
+<?	[str appendFormat:@" ?>#attribName;<?=\"%@\"", ?>#enumName;<?_to_string(_?>#attribName;<?)];
+?>
+				}
+				break;
+		}
+	}
+<?}
+
+?>
+}
+
+if(children.count > 0 || !hasParentClass)
+{
+<?-(void)appendXMLChildrenToString:(NSMutableString*)str
+{
+?>
+	if(hasParentClass)
+	{
+<?	[super appendXMLChildrenToString:str];
+
+?>
+	}
+
+	for(int j = 0; j < children.count; j++)
+	{
+		Object child = children[j];
+		String listName = pluralize((String)child.name);
+<?	for(?>#child.name;<?* child in _?>#listName;<?)
+		[child appendXMLTagToString:str];
+?>
+	}
+<?}
+
+?>
+}
+
+if(!hasParentClass || attributes.count > 0 || children.count > 0)
+{
+<?/*-(NoPL_FunctionValue)evaluateFunction:(const char*)functionName argv:(const NoPL_FunctionValue*)argv argc:(unsigned int)argc
+{
+?>
+
+//check if we only are putting this function in because it's the root class
+if(!hasParentClass && attributes.count == 0 && children.count == 0)
+{
+<?	NoPL_FunctionValue retVal;
+	retVal.type = NoPL_DataType_Uninitialized;
+	return retVal;
+?>
+}
+else
+{
+<?	NoPL_FunctionValue retVal;
+	retVal.type = NoPL_DataType_Uninitialized;
+	
+	if(argc == 0)
+	{
+		//accessors
+?>
+for(int j = 0; j < attributes.count; j++)
+{
+	Object attrib = attributes[j];
+	String attribName = attrib.name;
+	String typeName = attrib.type;
+	String convertedTypeName = valueForKey(typeName);
+<?		?>
+	if(j != 0)
+	{
+		<?else ?>
+	}
+	
+	//TODO: this generates a function with a whole lot of string comparisons, optimize this
+
+	if(convertedTypeName == 'CGPoint')
+	{
+		<?if(!strcmp(functionName, "?>#attribName;<?X"))
+		{
+			retVal.numberValue = ?>#attribName;<?.x;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?Y"))
+		{
+			retVal.numberValue = ?>#attribName;<?.y;
+			retVal.type = NoPL_DataType_Number;
+		}
+?>
+	}
+	else if(convertedTypeName == 'CGRect')
+	{
+		<?if(!strcmp(functionName, "?>#attribName;<?X"))
+		{
+			retVal.numberValue = ?>#attribName;<?.origin.x;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?Y"))
+		{
+			retVal.numberValue = ?>#attribName;<?.origin.y;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?W"))
+		{
+			retVal.numberValue = ?>#attribName;<?.size.width;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?H"))
+		{
+			retVal.numberValue = ?>#attribName;<?.size.height;
+			retVal.type = NoPL_DataType_Number;
+		}
+?>
+	}
+	else if(convertedTypeName == 'UIColor*')
+	{
+		<?if(!strcmp(functionName, "?>#attribName;<?R"))
+		{
+			retVal.numberValue = (float)?>#attribName;<?.rgb.r;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?G"))
+		{
+			retVal.numberValue = (float)?>#attribName;<?.rgb.g;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?B"))
+		{
+			retVal.numberValue = (float)?>#attribName;<?.rgb.b;
+			retVal.type = NoPL_DataType_Number;
+		}
+		else if(!strcmp(functionName, "?>#attribName;<?A"))
+		{
+			retVal.numberValue = (float)?>#attribName;<?.a;
+			retVal.type = NoPL_DataType_Number;
+		}
+?>
+	}
+	else
+	{
+		<?if(!strcmp(functionName, "?>#attribName;<?"))
+		{
+?>
+		switch(convertedTypeName)
+		{
+			case 'NSString*':
+<?			NoPL_assignString([_?>#attribName;<? UTF8String], retVal);
+?>
+				break;
+			case 'int':
+			case 'unsigned int':
+			case 'double':
+			case 'char':
+			case 'unsigned char':
+<?			retVal.numberValue = (float)_?>#attribName;<?;
+			retVal.type = NoPL_DataType_Number;
+?>
+				break;
+			case 'float':
+<?			retVal.numberValue = _?>#attribName;<?;
+			retVal.type = NoPL_DataType_Number;
+?>
+				break;
+			case 'BOOL':
+<?			retVal.booleanValue = _?>#attribName;<?;
+			retVal.type = NoPL_DataType_Boolean;
+?>
+				break;
+			default:
+
+				BOOL isEnum = NO;
+				String enumName;
+				Object enums = abstractions.enums;
+				for(int k = 0; k < enums.length; k++)
+				{
+					if(enums[k].enumName == typeName)
+					{
+						enumName = enums[k].enumName;
+						isEnum = YES;
+						break;
+					}
+				}
+				if(isEnum)
+				{
+					//this is an enum value, convert it to a string
+<?			const char* convertedEnum = [?>#enumName;<?_to_string(_?>#attribName;<?) UTF8String];
+			NoPL_assignString(convertedEnum, retVal);
+?>
+				}
+				else
+				{
+					//this is probably a pointer to an object?
+<?			retVal.pointerValue = _?>#attribName;<?;
+			retVal.type = NoPL_DataType_Pointer;
+?>
+				}
+				break;
+		}
+<?		}
+?>
+	}
+}
+for(int j = 0; j < children.count; j++)
+{
+<?		?>
+	if(j != 0 || attributes.count > 0)
+	{
+		<?else ?>
+	}
+	Object child = children[j];
+	String listName = pluralize((String)child.type);
+		<?if(!strcmp(functionName, "?>#listName;<?"))
+		{
+			retVal.pointerValue = (__bridge void *)(_?>#listName;<?);
+			retVal.type = NoPL_DataType_Pointer;
+		}
+?>
+}
+<?	}
+	else
+	{
+		//mutators
+?>
+for(int j = 0; j < attributes.count; j++)
+{
+	Object attrib = attributes[j];
+	String attribName = attrib.name;
+	String typeName = attrib.type;
+<?		?>
+	if(j != 0)
+	{
+		<?else ?>
+	}
+		<?if(!strcmp(functionName, "set?>#capitalize(attribName);<?"))
+		{
+?>
+		switch(valueForKey(typeName))
+		{
+			case 'NSString*':
+<?			if(argc == 1 && argv[0].type == NoPL_DataType_String)
+			{
+				[self set?>#capitalize(attribName);<?:[NSString stringWithUTF8String:argv[0].stringValue]];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			case 'int':
+			case 'unsigned int':
+			case 'double':
+			case 'char':
+			case 'unsigned char':
+<?			if(argc == 1 && argv[0].type == NoPL_DataType_Number)
+			{
+				[self set?>#capitalize(attribName);<?:(?>#valueForKey(typeName);<?)argv[0].numberValue];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			case 'float':
+<?			if(argc == 1 && argv[0].type == NoPL_DataType_Number)
+			{
+				[self set?>#capitalize(attribName);<?:argv[0].numberValue];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			case 'BOOL':
+<?			if(argc == 1 && argv[0].type == NoPL_DataType_Boolean)
+			{
+				[self set?>#capitalize(attribName);<?:(bool)argv[0].booleanValue];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			case 'CGPoint':
+<?			if(argc == 2 && argv[0].type == NoPL_DataType_Number && argv[1].type == NoPL_DataType_Number)
+			{
+				[self set?>#capitalize(attribName);<?:CGPointMake(argv[0].numberValue, argv[1].numberValue)];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			case 'CGRect':
+<?			if(argc == 4 && argv[0].type == NoPL_DataType_Number && argv[1].type == NoPL_DataType_Number && argv[2].type == NoPL_DataType_Number && argv[3].type == NoPL_DataType_Number)
+			{
+				[self set?>#capitalize(attribName);<?:CGRectMake(argv[0].numberValue, argv[1].numberValue, argv[2].numberValue, argv[3].numberValue)];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			case 'UIColor*':
+<?			if(argc == 4 && argv[0].type == NoPL_DataType_Number && argv[1].type == NoPL_DataType_Number && argv[2].type == NoPL_DataType_Number && argv[3].type == NoPL_DataType_Number)
+			{
+				[self set?>#capitalize(attribName);<?:[UIColor colorWithRed:argv[0].numberValue green:argv[1].numberValue blue:argv[2].numberValue alpha:argv[3].numberValue]];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				break;
+			default:
+
+				BOOL isEnum = NO;
+				String enumName;
+				Object enums = abstractions.enums;
+				for(int k = 0; k < enums.length; k++)
+				{
+					if(enums[k].enumName == typeName)
+					{
+						enumName = enums[k].enumName;
+						isEnum = YES;
+						break;
+					}
+				}
+				if(isEnum)
+				{
+					//this is an enum value, convert it from string
+<?			if(argc == 1 && argv[0].type == NoPL_DataType_String)
+			{
+				[self set?>#capitalize(attribName);<?:string_to_?>#enumName;<?(argv[0].stringValue)];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				}
+				else
+				{
+					//this is probably a pointer to an object?
+<?			if(argc == 1 && argv[0].type == NoPL_DataType_Pointer)
+			{
+				[self set?>#capitalize(attribName);<?:argv[0].pointerValue];
+				retVal.type = NoPL_DataType_Void;
+			}
+?>
+				}
+				break;
+		}
+<?		}
+?>
+}
+<?	}
+?>
+	if(!hasParentClass)
+	{
+<?	return retVal;
+?>
+	}
+	else
+	{
+<?	//return the result if we found one
+	if(retVal.type != NoPL_DataType_Uninitialized)
+		return retVal;
+	return [super evaluateFunction:functionName argv:argv argc:argc];
+?>
+	}
+}
+
+<?}*/
+
+?>
+if(!hasParentClass)
+{
+<?-(NSString*)description
+{
+	NSMutableString* str = [[NSMutableString alloc] init];
+	[str appendString:NSStringFromClass([self class])];
+	[self appendXMLAttributesToString:str];
+	return str;
+}
+
+?>
+}
+
+<?-(id)copyWithZone:(NSZone*)zone
+{
+?>
+if(hasParentClass)
+{
+<?	?>#baseName;<?* copy = [super copyWithZone:zone];
+?>
+}
+else
+{
+<?	?>#baseName;<?* copy = [[[self class] alloc] init];
+?>
+}
+for(int j = 0; j < attributes.count; j++)
+{
+	Object attrib = attributes[j];
+	String attribName = attrib.name;
+<?	copy.?>#attribName;<? = self.?>#attribName;<?;
+?>
+}
+for(int j = 0; j < children.count; j++)
+{
+	Object child = children[j];
+	String listName = pluralize((String)child.type);
+<?	for(?>#child.type;<?* child in self.?>#listName;<?)
+		[copy.?>#listName;<? addObject:[child copy]];
+?>
+}
+<?	return copy;
+}
+
+@end
+?>
+}
+
+}

@@ -1,0 +1,23 @@
+
+console("generating objc include");
+
+String schemaNickname = schema.targetNamespace;
+schemaNickname = substring(schemaNickname, lastIndexOf(schemaNickname, "/")+1);
+
+outputToFile(valueForKey('__ROOT_DIR__')+"/"+schemaNickname+".h");
+
+//TODO: make a single header that includes all of the other generated files
+
+<?
+#import "?>#schemaNickname;<?_enums.h"
+#import "?>#schemaNickname;<?_typedefs.h"
+?>
+
+Object classes = abstractions.classes;
+for(int i = 0; i < classes.count; i++)
+{
+	String className = classes[i].className;
+<?#import "?>#className;<?_Base.h"
+#import "?>#className;<?.h"
+?>
+}

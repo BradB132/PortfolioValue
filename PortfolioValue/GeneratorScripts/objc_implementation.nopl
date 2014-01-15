@@ -1,0 +1,34 @@
+
+console("generating objc implementations");
+
+Object classes = abstractions.classes;
+
+String schemaNickname = schema.targetNamespace;
+schemaNickname = substring(schemaNickname, lastIndexOf(schemaNickname, "/")+1);
+
+for(int i = 0; i < classes.count; i++)
+{
+	Object class = classes[i];
+	String name = class.className;
+
+	//output a blank file if we didn't already have one
+	if(!fileExists(valueForKey('__ROOT_DIR__')+"/"+name+".m"))
+	{
+		outputToFile(valueForKey('__ROOT_DIR__')+"/"+name+".m");
+//put a comment at the top with some metadata about this file
+<?//
+//  ?>#name;<?.mm
+//  ?>#schemaNickname;<?
+//
+//  Created by NoPLGenerator on ?>#format("%/%/%", (Number)month(), (Number)dayOfTheMonth(), (String)substring((String)year(), 2));<?.
+//  Copyright (c) ?>#year();<?. All rights reserved.
+//
+
+#import "?>#name;<?.h"
+
+@implementation ?>#name;<?
+
+@end
+?>
+	}
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:gf="http://GridFighter"
+	targetNamespace="http://GridFighter">
+
+<!-- CLASSES -->
+<element name="UserData" type="gf:UserData"/>
+<complexType name="UserData">
+	<sequence>
+		<element ref="gf:UserStock" minOccurs="0" maxOccurs="unbounded"/>
+	</sequence>
+</complexType>
+
+<element name="UserStock" type="gf:UserStock"/>
+<complexType name="UserStock">
+	<attribute name="symbolName" type="string" use="required"/>
+	<attribute name="sharesOwned" type="float" use="required"/>
+</complexType>
+
+</schema>

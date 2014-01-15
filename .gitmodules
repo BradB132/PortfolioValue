@@ -1,0 +1,3 @@
+[submodule "NoPLGenerator"]
+	path = NoPLGenerator
+	url = https://github.com/BradB132/NoPLGenerator.git

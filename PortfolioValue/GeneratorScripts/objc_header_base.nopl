@@ -1,0 +1,183 @@
+
+console("generating objc base headers");
+
+Object classes = abstractions.classes;
+
+//mess with this number if we get any hash collisions
+Number hashMod = 999999;
+
+String schemaNickname = schema.targetNamespace;
+schemaNickname = substring(schemaNickname, lastIndexOf(schemaNickname, "/")+1);
+
+for(int i = 0; i < classes.count; i++)
+{
+	Object class = classes[i];
+	String name = class.className;
+	String parentName = class.parentClassName;
+	Boolean hasParentClass = (parentName != "");
+	
+	//output a base class with generated code
+	String baseName = name+"_Base";
+	outputToFile(valueForKey('__ROOT_DIR__')+"/"+baseName+".h");
+
+//put a comment at the top with some metadata about this file
+<?//
+//  ?>#baseName;<?.h
+//  ?>#schemaNickname;<?
+//
+//  Created by NoPLGenerator on ?>#format("%/%/%", (Number)month(), (Number)dayOfTheMonth(), (String)substring((String)year(), 2));<?.
+//  Copyright (c) ?>#year();<?. All rights reserved.
+//
+
+?>
+//wrap this class definition with a precompiler macro
+<?#ifndef __?>#toUpper(baseName);<?_H__
+#define __?>#toUpper(baseName);<?_H__
+
+?>
+
+Object attributes = class.attributes;
+Object children = class.children;
+
+if(hasParentClass)
+{
+<?#import "?>#parentName;<?.h"
+
+?>
+}
+else
+{
+<?#import <Foundation/Foundation.h>
+#import <libxml/parser.h>
+//#import "NoPLRuntime.h"
+#import "?>#schemaNickname;<?_enums.h"
+#import "?>#schemaNickname;<?_typedefs.h"
+
+?>
+}
+
+<?@interface ?>#baseName;
+
+if(hasParentClass)
+{
+	//declare this class as the subclass of the parent class
+	<? : ?>#parentName;
+}
+else
+{
+	//use the default base class
+	<? : ?>#valueForKey('__ROOT_CLASS__');
+}
+<?
+{
+}
+
+?>
+
+if(!hasParentClass)
+{
+<?@property (nonatomic, weak) ?>#valueForKey('__ROOT_CLASS__');<?* parent;
+?>
+}
+
+//generate accessor functions if we have attributes
+if(attributes.count > 0)
+{
+	for(int j = 0; j < attributes.count; j++)
+	{
+		Object attr = attributes[j];
+		String typeName = valueForKey((String)attr.type);
+		BOOL isObject = (indexOf(typeName, '*') != -1);
+		if(isObject)
+		{
+<?@property (nonatomic, strong) ?>#typeName;<? ?>#attr.name;<?;
+?>
+		}
+		else
+		{
+<?@property (nonatomic, assign) ?>#typeName;<? ?>#attr.name;<?;
+?>
+		}
+	}
+}
+
+if(attributes.count > 0 || !hasParentClass)
+{
+<?
+?>
+}
+
+if(children.count > 0)
+{
+	for(int j = 0; j < children.count; j++)
+	{
+		Object child = children[j];
+		String listName = capitalize((String)pluralize((String)child.name));
+<?@property (nonatomic, readonly) NSMutableArray* ?>#listName;<?;
+?>
+	}
+<?
+
+?>
+}
+
+<?-(id)initWithXML:(xmlNodePtr)node parent:(?>#valueForKey('__ROOT_CLASS__');<?*)parentObj;
+
+?>
+if(!hasParentClass)
+{
+<?-(NSString*)printToXML;
+
+?>
+}
+
+if(!hasParentClass)
+{
+<?-(void)load;
+-(void)unload;
+
+-(id)copyWithZone:(NSZone*)zone;
+
+?>
+}
+
+if(!hasParentClass || children.count > 0)
+{
+<?-(void)visitLoad;
+-(void)visitUnload;
+
+?>
+}
+
+if(!hasParentClass || attributes.count > 0 || children.count > 0)
+{
+<?//-(NoPL_FunctionValue)evaluateFunction:(const char*)functionName argv:(const NoPL_FunctionValue*)argv argc:(unsigned int)argc;
+
+?>
+}
+
+<?//protected
+
+-(void)appendXMLTagToString:(NSMutableString*)str;
+?>
+if(!hasParentClass || attributes.count > 0 || children.count > 0)
+{
+	if(attributes.count > 0 || !hasParentClass)
+	{
+<?-(void)appendXMLAttributesToString:(NSMutableString*)str;
+?>
+	}
+	if(children.count > 0 || !hasParentClass)
+	{
+<?-(void)appendXMLChildrenToString:(NSMutableString*)str;
+?>
+	}
+<?
+?>
+}
+<?@end
+
+#endif //end __?>#toUpper(baseName);<?_H__
+?>
+	
+}
