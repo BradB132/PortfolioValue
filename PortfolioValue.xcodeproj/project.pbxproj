@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B7096181887B09300395D1C /* PortfolioValue_enums.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B7096141887B09300395D1C /* PortfolioValue_enums.m */; };
+		9B7096191887B09300395D1C /* PortfolioValue_typedefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B7096161887B09300395D1C /* PortfolioValue_typedefs.m */; };
 		9BF5DFC51884D48F002D52B8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5DFC41884D48F002D52B8 /* Foundation.framework */; };
 		9BF5DFC71884D48F002D52B8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5DFC61884D48F002D52B8 /* CoreGraphics.framework */; };
 		9BF5DFC91884D48F002D52B8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5DFC81884D48F002D52B8 /* UIKit.framework */; };
@@ -23,8 +25,6 @@
 		9BF5DFF11884D48F002D52B8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9BF5DFEF1884D48F002D52B8 /* InfoPlist.strings */; };
 		9BF5DFF31884D48F002D52B8 /* PortfolioValueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5DFF21884D48F002D52B8 /* PortfolioValueTests.m */; };
 		9BF5DFFE1884D68B002D52B8 /* PVMainTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5DFFD1884D68B002D52B8 /* PVMainTableController.m */; };
-		9BF5E00B1884E40B002D52B8 /* GridFighter_enums.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5E0041884E40B002D52B8 /* GridFighter_enums.m */; };
-		9BF5E00C1884E40B002D52B8 /* GridFighter_typedefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5E0061884E40B002D52B8 /* GridFighter_typedefs.m */; };
 		9BF5E00D1884E40B002D52B8 /* UserStock.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5E0081884E40B002D52B8 /* UserStock.m */; };
 		9BF5E00E1884E40B002D52B8 /* UserStock_Base.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF5E00A1884E40B002D52B8 /* UserStock_Base.m */; };
 		9BF5E0101884E6EE002D52B8 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5E00F1884E6EE002D52B8 /* libxml2.dylib */; };
@@ -45,6 +45,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9B7096131887B09300395D1C /* PortfolioValue_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PortfolioValue_enums.h; sourceTree = "<group>"; };
+		9B7096141887B09300395D1C /* PortfolioValue_enums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PortfolioValue_enums.m; sourceTree = "<group>"; };
+		9B7096151887B09300395D1C /* PortfolioValue_typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PortfolioValue_typedefs.h; sourceTree = "<group>"; };
+		9B7096161887B09300395D1C /* PortfolioValue_typedefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PortfolioValue_typedefs.m; sourceTree = "<group>"; };
+		9B7096171887B09300395D1C /* PortfolioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PortfolioValue.h; sourceTree = "<group>"; };
 		9BF5DFC11884D48F002D52B8 /* PortfolioValue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PortfolioValue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BF5DFC41884D48F002D52B8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9BF5DFC61884D48F002D52B8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -67,11 +72,6 @@
 		9BF5DFF21884D48F002D52B8 /* PortfolioValueTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PortfolioValueTests.m; sourceTree = "<group>"; };
 		9BF5DFFC1884D68B002D52B8 /* PVMainTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVMainTableController.h; sourceTree = "<group>"; };
 		9BF5DFFD1884D68B002D52B8 /* PVMainTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVMainTableController.m; sourceTree = "<group>"; };
-		9BF5E0021884E40B002D52B8 /* GridFighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridFighter.h; sourceTree = "<group>"; };
-		9BF5E0031884E40B002D52B8 /* GridFighter_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridFighter_enums.h; sourceTree = "<group>"; };
-		9BF5E0041884E40B002D52B8 /* GridFighter_enums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridFighter_enums.m; sourceTree = "<group>"; };
-		9BF5E0051884E40B002D52B8 /* GridFighter_typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridFighter_typedefs.h; sourceTree = "<group>"; };
-		9BF5E0061884E40B002D52B8 /* GridFighter_typedefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridFighter_typedefs.m; sourceTree = "<group>"; };
 		9BF5E0071884E40B002D52B8 /* UserStock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStock.h; sourceTree = "<group>"; };
 		9BF5E0081884E40B002D52B8 /* UserStock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserStock.m; sourceTree = "<group>"; };
 		9BF5E0091884E40B002D52B8 /* UserStock_Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStock_Base.h; sourceTree = "<group>"; };
@@ -197,11 +197,11 @@
 		9BF5E0011884E40B002D52B8 /* Generated */ = {
 			isa = PBXGroup;
 			children = (
-				9BF5E0021884E40B002D52B8 /* GridFighter.h */,
-				9BF5E0031884E40B002D52B8 /* GridFighter_enums.h */,
-				9BF5E0041884E40B002D52B8 /* GridFighter_enums.m */,
-				9BF5E0051884E40B002D52B8 /* GridFighter_typedefs.h */,
-				9BF5E0061884E40B002D52B8 /* GridFighter_typedefs.m */,
+				9B7096131887B09300395D1C /* PortfolioValue_enums.h */,
+				9B7096141887B09300395D1C /* PortfolioValue_enums.m */,
+				9B7096151887B09300395D1C /* PortfolioValue_typedefs.h */,
+				9B7096161887B09300395D1C /* PortfolioValue_typedefs.m */,
+				9B7096171887B09300395D1C /* PortfolioValue.h */,
 				9BF5E0141884F630002D52B8 /* UserData_Base.h */,
 				9BF5E0151884F630002D52B8 /* UserData_Base.m */,
 				9BF5E0161884F630002D52B8 /* UserData.h */,
@@ -341,12 +341,12 @@
 			files = (
 				9BF5E00E1884E40B002D52B8 /* UserStock_Base.m in Sources */,
 				9BF5E0131884EA5E002D52B8 /* PVUserStockManager.m in Sources */,
-				9BF5E00B1884E40B002D52B8 /* GridFighter_enums.m in Sources */,
 				9BF5E0181884F630002D52B8 /* UserData_Base.m in Sources */,
 				9BF5DFDE1884D48F002D52B8 /* PVViewController.m in Sources */,
 				9BF5DFFE1884D68B002D52B8 /* PVMainTableController.m in Sources */,
-				9BF5E00C1884E40B002D52B8 /* GridFighter_typedefs.m in Sources */,
 				9BF5E01C18850052002D52B8 /* PVAddController.m in Sources */,
+				9B7096191887B09300395D1C /* PortfolioValue_typedefs.m in Sources */,
+				9B7096181887B09300395D1C /* PortfolioValue_enums.m in Sources */,
 				9BF5E00D1884E40B002D52B8 /* UserStock.m in Sources */,
 				9BF5DFD51884D48F002D52B8 /* PVAppDelegate.m in Sources */,
 				9BF5DFD11884D48F002D52B8 /* main.m in Sources */,
@@ -581,6 +581,7 @@
 				9BF5DFF81884D48F002D52B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9BF5DFF91884D48F002D52B8 /* Build configuration list for PBXNativeTarget "PortfolioValueTests" */ = {
 			isa = XCConfigurationList;
@@ -589,6 +590,7 @@
 				9BF5DFFB1884D48F002D52B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

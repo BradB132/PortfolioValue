@@ -29,14 +29,25 @@
 	[_moneyFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(applicationDidBecomeActive)
+												 name:UIApplicationDidBecomeActiveNotification
+											   object:NULL];
+	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(dataDidUpdate)
 												 name:kPVUserStockManagerFinishedPricesUpdateNotification
 											   object:NULL];
+	
+	[[PVUserStockManager sharedInstance] refreshPriceData];
 }
 
 -(void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+-(void)applicationDidBecomeActive
+{
+	[[PVUserStockManager sharedInstance] refreshPriceData];
 }
 
 -(void)dataDidUpdate

@@ -19,3 +19,8 @@ DerivedData
 
 #CocoaPods
 Pods
+PortfolioValue.h
+PortfolioValue_enums.*
+PortfolioValue_typedefs.*
+*_Base.h
+*_Base.m

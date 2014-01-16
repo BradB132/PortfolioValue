@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:gf="http://GridFighter"
-	targetNamespace="http://GridFighter">
+	xmlns:gf="http://PortfolioValue"
+	targetNamespace="http://PortfolioValue">
 
 <!-- CLASSES -->
 <element name="UserData" type="gf:UserData"/>

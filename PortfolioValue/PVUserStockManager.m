@@ -154,6 +154,9 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 			UserStock* userStock = [self stockForSymbol:stockSymbol];
 			if(userStock)
 			{
+				//set name match exactly what the server returned
+				userStock.symbolName = stockSymbol;
+				
 				//set price with updated value
 				NSString* priceArg = stockArgs[1];
 				userStock.price = [priceArg floatValue];
