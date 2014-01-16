@@ -33,6 +33,14 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)updateAddBtn
+{
+	BOOL enabled = ([_symbolName.text length] > 0 &&
+					[_numberOfShares.text length] > 0);
+	
+	_addBtn.hidden = !enabled;
+}
+
 - (IBAction)tappedAddBtn:(UIButton *)sender
 {
 	UserStock* newStock = [[UserStock alloc] init];
@@ -55,10 +63,24 @@
 
 - (IBAction)didUpdateTextField:(UITextField *)sender
 {
-	BOOL enabled = ([_symbolName.text length] > 0 &&
-					[_numberOfShares.text length] > 0);
+	if(sender == _symbolName)
+	{
+		[PVUserStockManager verifyStockSymbol:_symbolName.text completion:^(BOOL success) {
+			
+			if(!success)
+			{
+				UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Stock Symbol Error" message:@"Could not validate symbol, check for spelling errors and confirm internet connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+				[alert show];
+				
+				_symbolName.text = @"";
+			}
+			
+			[self updateAddBtn];
+		}];
+	}
+	else
+		[self updateAddBtn];
 	
-	_addBtn.hidden = !enabled;
 }
 
 @end

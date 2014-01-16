@@ -10,9 +10,28 @@
 #import "UserStock.h"
 #import "UserData.h"
 
+#define kYahooApiInvalidResultPrefix @"N/A"
+
 NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUserStockManagerFinishedPricesUpdateNotification__";
 
 @implementation PVUserStockManager
+
++(void)verifyStockSymbol:(NSString *)symbol completion:(void (^)(BOOL))completionBlock
+{
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
+											 (unsigned long)NULL), ^(void) {
+		
+		//create the url for querying the stock price (using yahoo API)
+		NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://finance.yahoo.com/d/quotes.csv?s=%@&f=a", symbol]];
+		NSError* err;
+		NSString* result = [NSString stringWithContentsOfURL:url usedEncoding:nil error:&err];
+		BOOL success = (!err && ![result hasPrefix:kYahooApiInvalidResultPrefix]);
+		
+		dispatch_async(dispatch_get_main_queue(), ^{
+			completionBlock(success);
+        });
+	});
+}
 
 +(PVUserStockManager*)sharedInstance
 {

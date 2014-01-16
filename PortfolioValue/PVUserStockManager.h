@@ -16,7 +16,11 @@ extern NSString* const kPVUserStockManagerFinishedPricesUpdateNotification;
 
 @property (nonatomic, readonly) NSArray* userStocks;
 
+
+
 +(PVUserStockManager*)sharedInstance;
++(void)verifyStockSymbol:(NSString*)symbol completion:(void (^)(BOOL success))completionBlock;
+
 -(BOOL)addUserStock:(UserStock*)newStock;
 -(void)removeUserStock:(UserStock*)stock;
 -(UserStock*)stockForSymbol:(NSString*)symbol;
