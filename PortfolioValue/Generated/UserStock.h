@@ -17,6 +17,7 @@
 }
 
 @property (nonatomic, assign) float price;
+@property (nonatomic, strong) NSString* stockName;
 
 @end
 

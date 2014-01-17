@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9B7096181887B09300395D1C /* PortfolioValue_enums.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B7096141887B09300395D1C /* PortfolioValue_enums.m */; };
 		9B7096191887B09300395D1C /* PortfolioValue_typedefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B7096161887B09300395D1C /* PortfolioValue_typedefs.m */; };
+		9B7569E81888D97D0083CF3D /* CHCSVParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B7569E71888D97D0083CF3D /* CHCSVParser.m */; };
 		9BF5DFC51884D48F002D52B8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5DFC41884D48F002D52B8 /* Foundation.framework */; };
 		9BF5DFC71884D48F002D52B8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5DFC61884D48F002D52B8 /* CoreGraphics.framework */; };
 		9BF5DFC91884D48F002D52B8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF5DFC81884D48F002D52B8 /* UIKit.framework */; };
@@ -50,6 +51,8 @@
 		9B7096151887B09300395D1C /* PortfolioValue_typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PortfolioValue_typedefs.h; sourceTree = "<group>"; };
 		9B7096161887B09300395D1C /* PortfolioValue_typedefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PortfolioValue_typedefs.m; sourceTree = "<group>"; };
 		9B7096171887B09300395D1C /* PortfolioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PortfolioValue.h; sourceTree = "<group>"; };
+		9B7569E61888D97D0083CF3D /* CHCSVParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHCSVParser.h; sourceTree = "<group>"; };
+		9B7569E71888D97D0083CF3D /* CHCSVParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHCSVParser.m; sourceTree = "<group>"; };
 		9BF5DFC11884D48F002D52B8 /* PortfolioValue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PortfolioValue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BF5DFC41884D48F002D52B8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9BF5DFC61884D48F002D52B8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -112,6 +115,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9B7569E51888D97D0083CF3D /* CHCSVParser */ = {
+			isa = PBXGroup;
+			children = (
+				9B7569E61888D97D0083CF3D /* CHCSVParser.h */,
+				9B7569E71888D97D0083CF3D /* CHCSVParser.m */,
+			);
+			path = CHCSVParser;
+			sourceTree = "<group>";
+		};
 		9BF5DFB81884D48F002D52B8 = {
 			isa = PBXGroup;
 			children = (
@@ -146,6 +158,7 @@
 		9BF5DFCA1884D48F002D52B8 /* PortfolioValue */ = {
 			isa = PBXGroup;
 			children = (
+				9B7569E51888D97D0083CF3D /* CHCSVParser */,
 				9BF5E0011884E40B002D52B8 /* Generated */,
 				9BF5DFD31884D48F002D52B8 /* PVAppDelegate.h */,
 				9BF5DFD41884D48F002D52B8 /* PVAppDelegate.m */,
@@ -348,6 +361,7 @@
 				9B7096191887B09300395D1C /* PortfolioValue_typedefs.m in Sources */,
 				9B7096181887B09300395D1C /* PortfolioValue_enums.m in Sources */,
 				9BF5E00D1884E40B002D52B8 /* UserStock.m in Sources */,
+				9B7569E81888D97D0083CF3D /* CHCSVParser.m in Sources */,
 				9BF5DFD51884D48F002D52B8 /* PVAppDelegate.m in Sources */,
 				9BF5DFD11884D48F002D52B8 /* main.m in Sources */,
 				9BF5E0191884F630002D52B8 /* UserData.m in Sources */,

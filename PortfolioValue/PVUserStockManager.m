@@ -9,8 +9,10 @@
 #import "PVUserStockManager.h"
 #import "UserStock.h"
 #import "UserData.h"
+#import "CHCSVParser.h"
 
 #define kYahooApiInvalidResultPrefix @"N/A"
+#define NSStringStripQuotes(quotedStr) ([quotedStr length] > 2 ? [quotedStr substringWithRange:NSMakeRange(1, [quotedStr length]-2)] : @"")
 
 NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUserStockManagerFinishedPricesUpdateNotification__";
 
@@ -22,7 +24,7 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 											 (unsigned long)NULL), ^(void) {
 		
 		//create the url for querying the stock price (using yahoo API)
-		NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://finance.yahoo.com/d/quotes.csv?s=%@&f=a", symbol]];
+		NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://finance.yahoo.com/d/quotes.csv?s=%@&f=d", symbol]];
 		NSError* err;
 		NSString* result = [NSString stringWithContentsOfURL:url usedEncoding:nil error:&err];
 		BOOL success = (!err && ![result hasPrefix:kYahooApiInvalidResultPrefix]);
@@ -43,7 +45,7 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
     return sharedInstance;
 }
 
--(NSString*)saveFileDirectory
++(NSString*)saveFileDirectory
 {
 	NSArray* paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	return [paths objectAtIndex:0];
@@ -51,7 +53,7 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 
 -(NSString*)saveFilePath
 {
-	return [[self saveFileDirectory] stringByAppendingPathComponent:@"userData.xml"];
+	return [[PVUserStockManager saveFileDirectory] stringByAppendingPathComponent:@"userData.xml"];
 }
 
 -(id)init
@@ -84,7 +86,7 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 	NSString* xmlString = [dataObj printToXML];
 	
 	//make sure our directory exists
-	NSString* saveDirectory = [self saveFileDirectory];
+	NSString* saveDirectory = [PVUserStockManager saveFileDirectory];
 	if(![[NSFileManager defaultManager] fileExistsAtPath:saveDirectory])
 	{
 		[[NSFileManager defaultManager] createDirectoryAtPath:saveDirectory
@@ -152,7 +154,7 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 			
 			[urlString appendString:userStock.symbolName];
 		}
-		[urlString appendString:@"&f=sl1"];
+		[urlString appendString:@"&f=snl1"];
 		
 		NSURL* url = [NSURL URLWithString:urlString];
 		NSError* err;
@@ -160,27 +162,40 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 		if(err)
 			return;
 		
-		for(NSString* stockLine in [csv componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
+		
+		CHCSVParser* parser = [[CHCSVParser alloc] initWithCSVString:csv];
+		
+		//parse the .csv file
+		__block UserStock* stock;
+		parser.didBeginLineBlock = ^(CHCSVParser* parser, NSUInteger recordNumber)
 		{
-			if([stockLine length] <= 0)
-				continue;
-			
-			NSArray* stockArgs = [stockLine componentsSeparatedByString:@","];
-			
-			//find the user stock object
-			NSString* stockSymbol = stockArgs[0];
-			stockSymbol = [stockSymbol substringWithRange:NSMakeRange(1, [stockSymbol length]-2)];
-			UserStock* userStock = [self stockForSymbol:stockSymbol];
-			if(userStock)
+			stock = nil;
+		};
+		parser.didReadFieldBlock = ^(CHCSVParser* parser, NSString* field, NSInteger index)
+		{
+			switch (index)
 			{
-				//set name match exactly what the server returned
-				userStock.symbolName = stockSymbol;
-				
-				//set price with updated value
-				NSString* priceArg = stockArgs[1];
-				userStock.price = [priceArg floatValue];
+				case 0:
+				{
+					NSString* stockSymbol = NSStringStripQuotes(field);
+					stock = [self stockForSymbol:stockSymbol];
+					if(stock)
+						stock.symbolName = stockSymbol;
+				}
+					break;
+				case 1:
+					if(stock)
+						stock.stockName = NSStringStripQuotes(field);
+					break;
+				case 2:
+					if(stock)
+						stock.price = [field floatValue];
+					break;
+				default:
+					break;
 			}
-		}
+		};
+		[parser parse];
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self saveDataToFile];

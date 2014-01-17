@@ -99,7 +99,7 @@
 		case 1:
 		{
 			UserStock* userStock = [PVUserStockManager sharedInstance].userStocks[indexPath.row];
-			cell.textLabel.text = userStock.symbolName;
+			cell.textLabel.text = [NSString stringWithFormat:@"%@ - %@", userStock.symbolName, userStock.stockName];
 			cell.detailTextLabel.text = [NSString stringWithFormat:@"%g * %@ = %@", userStock.sharesOwned, [_moneyFormatter stringFromNumber:[NSNumber numberWithFloat:userStock.price]], [_moneyFormatter stringFromNumber:[NSNumber numberWithFloat:userStock.sharesOwned*userStock.price]]];
 		}
 			break;
