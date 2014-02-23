@@ -70,29 +70,43 @@
                                 <state key="normal" title="Refresh Data">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="performDataRefresh" destination="vXZ-lx-hvc" eventType="touchUpInside" id="4ma-hZ-p0g"/>
+                                </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="mCa-1P-pjs">
+                                <rect key="frame" x="160" y="20" width="160" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="pcG-XN-avJ" secondAttribute="trailing" id="7bA-FJ-VuN"/>
+                            <constraint firstItem="jqZ-a9-uuM" firstAttribute="width" secondItem="mCa-1P-pjs" secondAttribute="width" id="BHR-3h-7AZ"/>
+                            <constraint firstItem="jqZ-a9-uuM" firstAttribute="centerX" secondItem="mCa-1P-pjs" secondAttribute="centerX" id="Bva-Ue-ZQo"/>
                             <constraint firstItem="jqZ-a9-uuM" firstAttribute="leading" secondItem="EGN-vx-vNQ" secondAttribute="trailing" id="D3S-cR-W4x"/>
                             <constraint firstItem="jqZ-a9-uuM" firstAttribute="height" secondItem="EGN-vx-vNQ" secondAttribute="height" id="HSI-Jx-33O"/>
                             <constraint firstItem="EGN-vx-vNQ" firstAttribute="top" secondItem="JlY-cA-CJy" secondAttribute="bottom" id="W1s-JG-MjZ"/>
+                            <constraint firstItem="jqZ-a9-uuM" firstAttribute="centerY" secondItem="mCa-1P-pjs" secondAttribute="centerY" id="YHh-Cc-fVy"/>
                             <constraint firstItem="8GE-yO-QhP" firstAttribute="top" secondItem="pcG-XN-avJ" secondAttribute="bottom" id="aNj-m4-2qp"/>
                             <constraint firstItem="pcG-XN-avJ" firstAttribute="top" secondItem="EGN-vx-vNQ" secondAttribute="bottom" id="e1G-pP-bN7"/>
                             <constraint firstAttribute="trailing" secondItem="jqZ-a9-uuM" secondAttribute="trailing" id="fxv-w1-YRU"/>
                             <constraint firstItem="pcG-XN-avJ" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="hBe-uu-qhJ"/>
+                            <constraint firstItem="jqZ-a9-uuM" firstAttribute="height" secondItem="mCa-1P-pjs" secondAttribute="height" id="hNK-LG-W9R"/>
                             <constraint firstItem="jqZ-a9-uuM" firstAttribute="width" secondItem="EGN-vx-vNQ" secondAttribute="width" id="i2D-rM-bDb"/>
                             <constraint firstItem="EGN-vx-vNQ" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="jw4-BE-lTQ"/>
                             <constraint firstItem="jqZ-a9-uuM" firstAttribute="centerY" secondItem="EGN-vx-vNQ" secondAttribute="centerY" id="qhy-l9-fU0"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="mCa-1P-pjs" id="bEJ-nw-L8k"/>
                         <outlet property="tableView" destination="pcG-XN-avJ" id="tGr-2I-qjg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="10" y="86"/>
         </scene>
         <!--Add Controller-->
         <scene sceneID="axw-tM-dtz">

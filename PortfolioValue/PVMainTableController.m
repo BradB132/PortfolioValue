@@ -13,6 +13,7 @@
 @interface PVMainTableController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @property (nonatomic, strong) NSNumberFormatter* moneyFormatter;
 
@@ -29,7 +30,7 @@
 	[_moneyFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(applicationDidBecomeActive)
+											 selector:@selector(performDataRefresh)
 												 name:UIApplicationDidBecomeActiveNotification
 											   object:NULL];
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -37,7 +38,7 @@
 												 name:kPVUserStockManagerFinishedPricesUpdateNotification
 											   object:NULL];
 	
-	[[PVUserStockManager sharedInstance] refreshPriceData];
+	[self performDataRefresh];
 }
 
 -(void)dealloc
@@ -45,13 +46,17 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
--(void)applicationDidBecomeActive
+- (IBAction)performDataRefresh
 {
+	[_activityIndicator startAnimating];
+	[_activityIndicator setHidden:NO];
 	[[PVUserStockManager sharedInstance] refreshPriceData];
 }
 
 -(void)dataDidUpdate
 {
+	[_activityIndicator setHidden:YES];
+	[_activityIndicator stopAnimating];
 	[_tableView reloadData];
 }
 
@@ -92,7 +97,12 @@
 			for(UserStock* userStock in [PVUserStockManager sharedInstance].userStocks)
 				total += userStock.price*userStock.sharesOwned;
 			
-			cell.textLabel.text = [NSString stringWithFormat:@"TOTAL VALUE"];
+			NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+			[formatter setDateStyle:NSDateFormatterNoStyle];
+			[formatter setTimeStyle:NSDateFormatterShortStyle];
+			[formatter setLocale:[NSLocale currentLocale]];
+			
+			cell.textLabel.text = [NSString stringWithFormat:@"TOTAL VALUE - %@", [formatter stringFromDate:[[PVUserStockManager sharedInstance] lastUpdated]]];
 			cell.detailTextLabel.text = [_moneyFormatter stringFromNumber:[NSNumber numberWithFloat:total]];
 		}
 			break;

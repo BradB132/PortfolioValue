@@ -15,8 +15,8 @@ extern NSString* const kPVUserStockManagerFinishedPricesUpdateNotification;
 @interface PVUserStockManager : NSObject
 
 @property (nonatomic, readonly) NSArray* userStocks;
-
-
+@property (nonatomic, readonly) BOOL isUpdateInProgress;
+@property (nonatomic, readonly) NSDate* lastUpdated;
 
 +(PVUserStockManager*)sharedInstance;
 +(void)verifyStockSymbol:(NSString*)symbol completion:(void (^)(BOOL success))completionBlock;

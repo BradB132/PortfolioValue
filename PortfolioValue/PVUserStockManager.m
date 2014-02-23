@@ -13,6 +13,7 @@
 
 #define kYahooApiInvalidResultPrefix @"N/A"
 #define NSStringStripQuotes(quotedStr) ([quotedStr length] > 2 ? [quotedStr substringWithRange:NSMakeRange(1, [quotedStr length]-2)] : @"")
+#define kLastUpdatedKey @"__PVUserStockManager_lastUpdated__"
 
 NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUserStockManagerFinishedPricesUpdateNotification__";
 
@@ -24,10 +25,10 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 											 (unsigned long)NULL), ^(void) {
 		
 		//create the url for querying the stock price (using yahoo API)
-		NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://finance.yahoo.com/d/quotes.csv?s=%@&f=d", symbol]];
+		NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://finance.yahoo.com/d/quotes.csv?s=%@&f=l1", symbol]];
 		NSError* err;
 		NSString* result = [NSString stringWithContentsOfURL:url usedEncoding:nil error:&err];
-		BOOL success = (!err && ![result hasPrefix:kYahooApiInvalidResultPrefix]);
+		BOOL success = (result && ![result hasPrefix:kYahooApiInvalidResultPrefix]);
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
 			completionBlock(success);
@@ -61,6 +62,12 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 	self = [super init];
 	if(self)
 	{
+		_isUpdateInProgress = NO;
+		
+		double updateTime = [[NSUserDefaults standardUserDefaults] doubleForKey:kLastUpdatedKey];
+		if(updateTime > 0)
+			_lastUpdated = [NSDate dateWithTimeIntervalSince1970:updateTime];
+		
 		//load the user stocks from file (if we have a file)
 		NSString* dataFullPath = [self saveFilePath];
 		xmlDocPtr xmlDocument = xmlReadFile([dataFullPath UTF8String], NULL, XML_PARSE_XINCLUDE|XML_PARSE_NONET|XML_PARSE_NSCLEAN);
@@ -136,8 +143,10 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 
 -(void)refreshPriceData
 {
-	if(!([_userStocks count] > 0))
+	if(!([_userStocks count] > 0) || _isUpdateInProgress)
 		return;
+	
+	_isUpdateInProgress = YES;
 	
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
 											 (unsigned long)NULL), ^(void) {
@@ -160,8 +169,10 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 		NSError* err;
 		NSString* csv = [NSString stringWithContentsOfURL:url usedEncoding:nil error:&err];
 		if(err)
+		{
 			return;
-		
+			_isUpdateInProgress = NO;
+		}
 		
 		CHCSVParser* parser = [[CHCSVParser alloc] initWithCSVString:csv];
 		
@@ -198,7 +209,13 @@ NSString * const kPVUserStockManagerFinishedPricesUpdateNotification = @"__kPVUs
 		[parser parse];
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
+			
 			[self saveDataToFile];
+			
+			_lastUpdated = [NSDate date];
+			[[NSUserDefaults standardUserDefaults] setDouble:[_lastUpdated timeIntervalSince1970] forKey:kLastUpdatedKey];
+			
+			_isUpdateInProgress = NO;
 			[self notifyDataUpdate];
         });
 	});
