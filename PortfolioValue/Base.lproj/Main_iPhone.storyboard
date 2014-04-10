@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--Main Table Controller-->
@@ -202,7 +202,40 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CqQ-Jx-5Ey" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="0jD-Qa-OLi" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="912" y="-5"/>
+            <point key="canvasLocation" x="944" y="86"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="fWL-fu-GWO">
+            <objects>
+                <viewController id="kdQ-vb-4yK" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="sSU-So-vEb"/>
+                        <viewControllerLayoutGuide type="bottom" id="fJs-lz-T7S"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="FCP-Zb-LJp">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="350"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="When we add more text, an issue starts to become clear" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CGq-24-nNh">
+                                <rect key="frame" x="10" y="165" width="430" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CGq-24-nNh" secondAttribute="trailing" constant="10" id="6s1-F8-pcj"/>
+                            <constraint firstItem="CGq-24-nNh" firstAttribute="top" secondItem="sSU-So-vEb" secondAttribute="bottom" constant="145" id="WHV-wa-qn5"/>
+                            <constraint firstItem="CGq-24-nNh" firstAttribute="leading" secondItem="FCP-Zb-LJp" secondAttribute="leading" constant="10" id="tX3-0c-1aX"/>
+                        </constraints>
+                    </view>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="450" height="350"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HHs-ku-e8m" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="675" y="764"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dXE-ZC-W6u">
@@ -217,7 +250,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="irD-Vy-Lm4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="486" y="-5"/>
+            <point key="canvasLocation" x="472" y="86"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
